@@ -89,5 +89,19 @@ describe Request do
       m.to.must_equal [@email]
       m.body.to_s.wont_match /I didn't understand/i
     end
+
+    it "should be case insensitive" do
+      content = [ "NEW GAME",
+                  "GUESS B"
+                ].join("\n")
+      
+      req = Request.new :email    => @email, 
+                        :content  => content
+      req.process
+
+      m = Mail::TestMailer.deliveries.first
+      m.to.must_equal [@email]
+      m.body.to_s.wont_match /I didn't understand/i
+    end
   end
 end

@@ -60,7 +60,7 @@ module Hangman
     end
 
     def filtered_content
-      @content.split("\n").reject do |line|
+      @content.downcase.split("\n").reject do |line|
         case line
           when /^\s*>/          ; true
           when /hangman.?bot/   ; true
@@ -68,7 +68,6 @@ module Hangman
           else                  ; false
         end
       end
-
     end
 
     def self.next
