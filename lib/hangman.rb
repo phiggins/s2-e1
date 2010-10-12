@@ -37,6 +37,6 @@ module Hangman
   VERSION = "0.0.1"
 
   def self.start
-    Server.start
+    Server.start :verbose => true
   end
 end

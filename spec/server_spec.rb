@@ -7,7 +7,7 @@ describe Server do
     queue.expect :next, nil
 
     Thread.abort_on_exception = true
-    t = Thread.new { Server.start queue }
+    t = Thread.new { Server.start :queue => queue }
     sleep 0.1
     t.kill
 
@@ -25,7 +25,7 @@ describe Server do
     queue.instance_eval { alias :next :shift }
 
     Thread.abort_on_exception = true
-    t = Thread.new { Server.start queue }
+    t = Thread.new { Server.start :queue => queue }
     sleep 0.1
     t.kill
 
