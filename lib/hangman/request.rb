@@ -30,6 +30,8 @@ module Hangman
     
     def guess letter
       game = @user.game
+      return "" if game.won? or game.lost?
+
       correct = game.guess letter
       message = ["You guessed: #{letter}"]
 

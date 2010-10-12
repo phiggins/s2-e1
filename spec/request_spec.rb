@@ -103,5 +103,21 @@ describe Request do
       m.to.must_equal [@email]
       m.body.to_s.wont_match /I didn't understand/i
     end
+
+    it "should not respond to guesses when the game is over" do
+      user = User.find_or_create(next_email)
+      game = Game.new("ab")
+      user.game = game
+      
+      content = "guess a\nguess b\nguess c"
+      
+      req = Request.new :email    => @email, 
+                        :content  => content
+      req.process
+
+      m = Mail::TestMailer.deliveries.first
+      m.to.must_equal [@email]
+      m.body.to_s.wont_match /You won.*You won/im
+    end
   end
 end
