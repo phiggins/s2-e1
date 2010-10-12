@@ -7,7 +7,7 @@ module Hangman
     end
 
     def process
-      @responses = @content.split("\n").map do |command|
+      @responses = filtered_content.map do |command|
         case command
         when /^new/
           new_game
@@ -57,6 +57,18 @@ module Hangman
       mail.body     = @responses.join("\n\n#{SPACER * 10}\n\n")
 
       mail.deliver!
+    end
+
+    def filtered_content
+      @content.split("\n").reject do |line|
+        case line
+          when /^\s*>/          ; true
+          when /hangman.?bot/   ; true
+          when /^\s*$/          ; true
+          else                  ; false
+        end
+      end
+
     end
 
     def self.next

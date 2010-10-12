@@ -74,5 +74,20 @@ describe Request do
       m.to.must_equal [@email]
       m.body.to_s.must_match /you lost/i
     end
+
+    it "should filter blank lines and quoted text" do
+      content = [ "\n",             
+                  "> You lost! :(",
+                  "On Mon, Oct 11, 2010 at 11:26 PM,  <hangman.bot@gmail.com> wrote:"
+                ].join("\n")
+      
+      req = Request.new :email    => @email, 
+                        :content  => content
+      req.process
+
+      m = Mail::TestMailer.deliveries.first
+      m.to.must_equal [@email]
+      m.body.to_s.wont_match /I didn't understand/i
+    end
   end
 end
