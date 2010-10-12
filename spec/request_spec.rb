@@ -12,7 +12,7 @@ describe Request do
   describe "when asked to create a game" do
     before do
       @email = next_email
-      @req = Request.new(:email => @email, :content => "new game")
+      @req = Request.new :email => @email, :content => ["new game"]
       @req.process
     end
 
@@ -36,7 +36,7 @@ describe Request do
     end
 
     it "should tell the guesser when they were correct" do
-      req = Request.new(:email => @email, :content => "guess a")
+      req = Request.new :email => @email, :content => ["guess a"]
       req.process
 
       m = Mail::TestMailer.deliveries.first
@@ -45,7 +45,7 @@ describe Request do
     end
 
     it "should tell the guesser when they were wrong" do
-      req = Request.new(:email => @email, :content => "guess z")
+      req = Request.new :email => @email, :content => ["guess z"]
       req.process
 
       m = Mail::TestMailer.deliveries.first
@@ -55,7 +55,7 @@ describe Request do
 
     it "should tell the guesser when they have won" do
       req = Request.new :email    => @email, 
-                        :content  => "guess a\nguess b"
+                        :content  => ["guess a", "guess b"]
       req.process
 
       m = Mail::TestMailer.deliveries.first
@@ -64,7 +64,7 @@ describe Request do
     end
 
     it "should tell the guesser when they have lost" do
-      guesses = %w(z y x w v).map {|c| "guess #{c}" }.join("\n")
+      guesses = %w(z y x w v).map {|c| "guess #{c}" }
 
       req = Request.new :email    => @email, 
                         :content  => guesses
@@ -75,41 +75,12 @@ describe Request do
       m.body.to_s.must_match /you lost/i
     end
 
-    it "should filter blank lines and quoted text" do
-      content = [ "\n",             
-                  "> You lost! :(",
-                  "On Mon, Oct 11, 2010 at 11:26 PM,  <hangman.bot@gmail.com> wrote:"
-                ].join("\n")
-      
-      req = Request.new :email    => @email, 
-                        :content  => content
-      req.process
-
-      m = Mail::TestMailer.deliveries.first
-      m.to.must_equal [@email]
-      m.body.to_s.wont_match /I didn't understand/i
-    end
-
-    it "should be case insensitive" do
-      content = [ "NEW GAME",
-                  "GUESS B"
-                ].join("\n")
-      
-      req = Request.new :email    => @email, 
-                        :content  => content
-      req.process
-
-      m = Mail::TestMailer.deliveries.first
-      m.to.must_equal [@email]
-      m.body.to_s.wont_match /I didn't understand/i
-    end
-
     it "should not respond to guesses when the game is over" do
       user = User.find_or_create(next_email)
       game = Game.new("ab")
       user.game = game
       
-      content = "guess a\nguess b\nguess c"
+      content = ["guess a", "guess b", "guess c"]
       
       req = Request.new :email    => @email, 
                         :content  => content

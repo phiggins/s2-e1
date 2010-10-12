@@ -29,7 +29,7 @@ OMGBROKEN
   exit 1
 end
 
-%w( mail_setup game server request user word ).each do |lib|
+%w( mail_setup game server request request_queue user word ).each do |lib|
   require "hangman/#{lib}"
 end
 

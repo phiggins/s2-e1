@@ -5,26 +5,14 @@ module Hangman
     end
 
     def initialize opts 
-      @queue    = opts[:queue] || Request
+      @queue    = opts[:queue] || RequestQueue.new
       @wait     = opts[:wait] || 30
       @verbose  = opts[:verbose]
     end
 
     def start
       loop do
-        while request = @queue.next
-          puts "processing request:\n#{request.inspect}" if @verbose
-
-          # Running the server in rake would swallow exceptions. I can make 
-          # sure I get verbose output this way.
-          begin
-            request.process
-          rescue Exception => e
-            $stderr.puts ["#{e} (#{e.class})", e.backtrace].join("\n")
-            raise
-          end
-        end
-        puts "sleeping for #{@wait} seconds." if @verbose
+        @queue.process!
         sleep @wait
       end
     end

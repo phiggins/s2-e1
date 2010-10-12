@@ -7,7 +7,7 @@ module Hangman
     end
 
     def process
-      @responses = filtered_content.map do |command|
+      @responses = @content.map do |command|
         case command
         when /^new/
           new_game
@@ -59,39 +59,6 @@ module Hangman
       mail.body     = @responses.join("\n\n#{SPACER * 10}\n\n")
 
       mail.deliver!
-    end
-
-    def filtered_content
-      @content.downcase.split("\n").reject do |line|
-        case line
-          when /^\s*>/          ; true
-          when /hangman.?bot/   ; true
-          when /^\s*$/          ; true
-          else                  ; false
-        end
-      end
-    end
-
-    def self.next
-      request = Mail.find(:count => 1)
-
-      # Mail.find(:count=>1) returns either:
-      # - an empty array if there are no messages, or
-      # - a Mail::Request or somesuch
-      unless request.respond_to?(:empty?) and request.empty?
-        new( parse(request) )
-      end 
-    end
-
-    def self.parse request
-      content = if request.multipart?
-        request.parts.first.body.to_s
-      else
-        request.body.to_s
-      end
-
-      { :email    => request.from,
-        :content  => content }
     end
   end
 end
