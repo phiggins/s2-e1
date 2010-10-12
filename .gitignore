@@ -3,3 +3,5 @@
 
 # secretz
 lib/hangman/creds.rb
+
+.bundle/*
