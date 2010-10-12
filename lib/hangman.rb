@@ -1,4 +1,12 @@
-require 'mail'
+require "bundler"
+begin
+  Bundler.require
+rescue Bundler::GemNotFound => e
+  $stderr.puts "Bundler got an exception:"
+  $stderr.puts e.to_s
+  $stderr.puts "Have you run `bundle install` yet?"
+  exit 1
+end
 
 begin
   require 'hangman/creds'
